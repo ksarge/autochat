@@ -5,6 +5,7 @@ from osrsbotbot import Bot
 INSERT = '1'
 MSG_RUNNING = 'running'
 MSG_STOPPED = 'stopped'
+MSG_LIMIT_VALIDATION_ERROR = 'wait time validation failed'
 
 class Application(tk.Tk):
     def __init__(self):
@@ -40,14 +41,27 @@ class Application(tk.Tk):
         self.info_text.config(state=tk.DISABLED)
 
     def start(self, cmd, lower_limit, upper_limit):
-        self.bot.start(cmd, int(lower_limit), int(upper_limit))
-        self.status_string.set(MSG_RUNNING)
-        self.status_label.config(fg='green')
+        try:
+            lower = int(lower_limit)
+            upper = int(upper_limit)
+            is_valid = self.bot.validate_limits(lower, upper)
+        except ValueError as e:
+            print('failed to cast limits to ints')
+            is_valid = False
+
+
+        if is_valid:
+            self.bot.start(cmd, lower, upper)
+            self.status_string.set(MSG_RUNNING)
+            self.status_label.config(fg='green')
+        else:
+            self.status_string.set(MSG_LIMIT_VALIDATION_ERROR)
+            self.status_label.config(fg='red')
 
     def stop(self):
         self.bot.stop()
         self.status_string.set(MSG_STOPPED)
-        self.status_label.config(fg='red')
+        self.status_label.config(fg='black')
 
     def quit(self):
         self.stop()
@@ -71,7 +85,7 @@ class Application(tk.Tk):
 
         self.lower_entry = tk.Entry(self, validate='key', validatecommand=nvc, invalidcommand=nvec, textvariable=tk.StringVar(value='35'))
         self.upper_entry = tk.Entry(self, validate='key', validatecommand=nvc, invalidcommand=nvec, textvariable=tk.StringVar(value='36'))
-        self.cmd_entry = tk.Entry(self)
+        self.cmd_entry = tk.Entry(self, textvariable=tk.StringVar(value='+m k zulrah'))
 
         self.lower_entry.grid(row=0, column=1)
         self.upper_entry.grid(row=1, column=1)

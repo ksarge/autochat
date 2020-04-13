@@ -33,14 +33,15 @@ class Bot:
         else:
             print('nothing to stop, bot is already inactive.')
 
+    def validate_limits(self, lower, upper):
+        return upper > lower
+
     def bot(self, cmd: str, lower_limit: int, upper_limit: int):
         """
         lower_limit and upper_limit are in minutes
         """
         print('starting bot in 5 seconds')
         self.exit_event.wait(5)
-
-        self.active = True
 
         while not self.exit_event.is_set():
             keyboard.write(cmd + '\n')
