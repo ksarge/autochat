@@ -31,7 +31,7 @@ class Bot:
 			self.t.join()
 			self.t = None
 		else:
-			print('nothing to stop, bot is already inactive')
+			print('nothing to stop, bot is already inactive.')
 
 	def bot(self, cmd: str, lower_limit: int, upper_limit: int):
 		"""
@@ -44,8 +44,8 @@ class Bot:
 
 		while not self.exit.is_set():
 			keyboard.write(cmd + '\n')
-			tts = random.randrange(lower_limit, upper_limit)
-			print(f'[{datetime.now()}] sleeping for {tts / 60} minutes')
-			self.exit.wait(tts)
+			duration = random.randrange(lower_limit * 60, upper_limit * 60)
+			print(f'[{datetime.now()}] sleeping for {duration / 60} minutes')
+			self.exit.wait(duration)
 
 		print('stopping bot. goodbye.')
