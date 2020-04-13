@@ -1,4 +1,10 @@
-## Usage
-`python3 osrsbotbot.py '+m k kree'`
+## Installation
+- Create and activate a python virtual environment (google it)
+- Run `pip install -r requirements.txt`
 
-Waits 5 seconds, runs the command, and then runs it again every 33-36 minutes.
+## Usage
+`python3 autochat/application.py`
+
+Waits 5 seconds (this is when you need to put your cursor where you need the text sent), and then runs your command until you press stop. The enter key is automatically pressed after the command. The time between each command is a randomly generated value in between the two times provided to the GUI.
+
+
