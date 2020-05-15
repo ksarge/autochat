@@ -30,4 +30,3 @@ This would result in the following being written to the screen with a 1 second d
 +buy huge jug pack
 confirm
 ```
->>>>>>> Stashed changes
