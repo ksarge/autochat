@@ -1,11 +1,11 @@
 import tkinter as tk
-from functools import partial
-from osrsbotbot import Bot
+from bot import Bot
 
 INSERT = '1'
 MSG_RUNNING = 'running'
 MSG_STOPPED = 'stopped'
-MSG_LIMIT_VALIDATION_ERROR = 'wait time validation failed'
+MSG_VALIDATION_FAILED = 'the command and/or wait times failed validation'
+
 
 class Application(tk.Tk):
     def __init__(self):
@@ -36,7 +36,14 @@ class Application(tk.Tk):
             'The program will wait for 5 seconds before sending the first command; make sure to put your cursor where you want your text sent.\n'
             'After each command is sent, the program sleeps for a random duration between the lower and upper limits, and then sends the command again.\n\n'
             'Press stop or quit to stop the program from sending commands.\n\n'
-            'https://github.com/ksarge/autochat'
+            'https://github.com/ksarge/autochat\n'
+            'Seconds to minutes conversion:\n\n'
+            '1920s = 32m\n'
+            '1980s = 33m\n'
+            '2040s = 34m\n'
+            '2100s = 35m\n'
+            '2160s = 36m\n'
+            '2220s = 37m\n'
         )
         self.info_text.config(state=tk.DISABLED)
 
@@ -44,18 +51,17 @@ class Application(tk.Tk):
         try:
             lower = int(lower_limit)
             upper = int(upper_limit)
-            is_valid = self.bot.validate_limits(lower, upper)
+            is_valid = self.bot.validate_limits(lower, upper) and self.bot.validate_command(cmd)
         except ValueError as e:
             print('failed to cast limits to ints')
             is_valid = False
-
 
         if is_valid:
             self.bot.start(cmd, lower, upper)
             self.status_string.set(MSG_RUNNING)
             self.status_label.config(fg='green')
         else:
-            self.status_string.set(MSG_LIMIT_VALIDATION_ERROR)
+            self.status_string.set(MSG_VALIDATION_FAILED)
             self.status_label.config(fg='red')
 
     def stop(self):
@@ -68,8 +74,8 @@ class Application(tk.Tk):
         super().quit()
 
     def create_widgets(self):
-        tk.Label(self, text='Lower wait time').grid(row=0)
-        tk.Label(self, text='Upper wait time').grid(row=1)
+        tk.Label(self, text='Lower wait time (sec)').grid(row=0)
+        tk.Label(self, text='Upper wait time (sec)').grid(row=1)
         tk.Label(self, text='Command').grid(row=2)
 
         tk.Label(self, text='Status:').grid(row=3, column=0)
@@ -83,9 +89,9 @@ class Application(tk.Tk):
         nvc = (self.register(self.number_validation), '%P', '%d')
         nvec = (self.register(self.number_validation_error), '%P')
 
-        self.lower_entry = tk.Entry(self, validate='key', validatecommand=nvc, invalidcommand=nvec, textvariable=tk.StringVar(value='35'))
-        self.upper_entry = tk.Entry(self, validate='key', validatecommand=nvc, invalidcommand=nvec, textvariable=tk.StringVar(value='36'))
-        self.cmd_entry = tk.Entry(self, textvariable=tk.StringVar(value='+m k zulrah'))
+        self.lower_entry = tk.Entry(self, validate='key', validatecommand=nvc, invalidcommand=nvec, textvariable=tk.StringVar(value='2100'))
+        self.upper_entry = tk.Entry(self, validate='key', validatecommand=nvc, invalidcommand=nvec, textvariable=tk.StringVar(value='2160'))
+        self.cmd_entry = tk.Entry(self, textvariable=tk.StringVar(value='+buy huge jug pack;{sleep 1};confirm'))
 
         self.lower_entry.grid(row=0, column=1)
         self.upper_entry.grid(row=1, column=1)
